@@ -34,7 +34,7 @@ namespace Client
         public string getFromServer()
         {
             StringBuilder builder = new StringBuilder();
-            byte[] data = new byte[256]; // буфер для ответа
+            byte[] data = new byte[256]; // буфер для ответаf
             int bytes = 0; // количество полученных байт
             do
             {
