@@ -93,10 +93,11 @@ namespace Client
                 // хэшируем пароль
                 hpassw.GetHash(PasswBox.Text);
 
-
-                // передаем на сервер логин и хэш и ждем от сервера подтверждения авторизации
                 connection.sendToServer(protocol.commands.authorizetionRequest); // запрос на авторизацию
+                string f = connection.getFromServer();
+                // передаем на сервер логин и хэш и ждем от сервера подтверждения авторизации
                 connection.sendToServer(login);// отправляем логин
+                f = connection.getFromServer();
                 connection.sendToServer(hpassw.output);// отправляем хэш пароля
 
                 // получаем ответ сервера
@@ -107,7 +108,7 @@ namespace Client
                 {
                     // переходим на основную форму
                     newForm.Show();
-                    this.Close(); // просто скрывает форму, но не закрывает ее
+                    this.Hide(); // просто скрывает форму, но не закрывает ее
                 }
 
                 // если сервер не подтвердил вход, пишем соответствующее сообщение
@@ -129,13 +130,6 @@ namespace Client
             connection.socket.Shutdown(SocketShutdown.Both);
             connection.socket.Close();
         }
-
-        private void Form2_Activated(object sender, EventArgs e)
-        {
-           // LoginBox.Clear();
-           // PasswBox.Clear();
-        }
-
         private void Form2_Load(object sender, EventArgs e)
         {
             try

@@ -43,17 +43,23 @@ namespace Client
             data = Encoding.Unicode.GetBytes(result);
 
                 //преобразовать byte[] в RSAParametrs для использования открытого ключа
+                //int lBeginStart = "-----BEGIN PUBLIC KEY-----".Length;
+                //int lEndLength = "-----END PUBLIC KEY-----".Length;
+                //string KeyString = publickey.Substring(lBeginStart, (publickey.Length - lBeginStart - lEndLength));
+                //string tobase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(KeyString));
+                
+                //byte[] keyBlobBytes = Convert.FromBase64String(publickey);
+                //provider.ImportCspBlob(keyBlobBytes);
+                
+                // var parameters = prov.ExportParameters(false);
 
-                var prov = new RSACryptoServiceProvider();
+                // RSAParameters parameters = new RSAParameters();
+                // parameters = GetRSAParameters(publickey);
+                // provider.ImportParameters(parameters); // установили закрытый ключ 
+               // string toxml = provider.ToString
 
-                byte[] keyBlobBytes = Convert.FromBase64String(publickey);
-                prov.ImportCspBlob(keyBlobBytes);
-                var parameters = prov.ExportParameters(false);
-
-
-                provider.ImportParameters(parameters); // установили закрытый ключ 
-
-            decryptedData = provider.Decrypt(data, false);
+                provider.FromXmlString(publickey);
+                decryptedData = provider.Decrypt(data, false);
 
             builder.Append(Encoding.Unicode.GetString(decryptedData)).ToString();
             }
@@ -109,18 +115,20 @@ namespace Client
                              .ToArray();
         }
 
-        private static RSAParameters GetRSAParameters(byte[] pPublicKey)
+        private static RSAParameters GetRSAParameters(string pPublicKey)
         {
             //Set RSAKeyInfo to the public key values. 
             int lBeginStart = "-----BEGIN PUBLIC KEY-----".Length;
             int lEndLength = "-----END PUBLIC KEY-----".Length;
-            //string KeyString = pPublicKey.Substring(lBeginStart, (pPublicKey.Length - lBeginStart - lEndLenght));
-            //lDer = pPublicKey.//= Convert.FromBase64String(KeyString);
-            byte[] lDer = new byte[pPublicKey.Length - lBeginStart - lEndLength];
-            for(int i =0; i<pPublicKey.Length - lEndLength - lBeginStart; i++)
-            {
-                lDer[i] = pPublicKey[i  + lBeginStart];
-            }
+            string KeyString = pPublicKey.Substring(lBeginStart, (pPublicKey.Length - lBeginStart - lEndLength));
+            string tobase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(KeyString));
+            byte[] lDer = new byte[256];
+            lDer = Convert.FromBase64String(tobase64); 
+            //byte[] lDer = new byte[pPublicKey.Length - lBeginStart - lEndLength];
+            //for(int i =0; i<pPublicKey.Length - lEndLength - lBeginStart; i++)
+            //{
+            //    lDer[i] = pPublicKey[i  + lBeginStart];
+            //}
 
             //Create a new instance of the RSAParameters structure.
             RSAParameters lRSAKeyInfo = new RSAParameters();

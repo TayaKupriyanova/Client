@@ -13,7 +13,6 @@ namespace Client
 {
     public partial class fGetSign : Form
     {
-        //StartPage sp;
         Form2 form2;
         string fileName;
         string signedfile;
@@ -81,7 +80,7 @@ namespace Client
             // приняли ответ с сервера
             string answer = form2.connection.getFromServer();
 
-            // переслать на сервер путь к файлу (или сам файл????)
+            // переслать на сервер путь к файлу
             form2.connection.sendToServer(fileName);
 
             // получаем открытый ключ и зашифрованный файл с сервера
@@ -94,7 +93,7 @@ namespace Client
 
             
             // вывести в месседж бокс сообщение о том что мы все подписали и мы молодцы
-            MessageBox.Show("Файл подписан!", form2.protocol.commands.getSignRequest, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("Файл подписан!", form2.protocol.commands.getSignRequest, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
         }
 
@@ -119,9 +118,11 @@ namespace Client
 
         private void ViewSign_Click(object sender, EventArgs e)
         {
-            //Открыть полученный из ЦП файл
+            //Открыть файл
             // переписать его в текстбокс
-            using (StreamReader sr = new StreamReader(digitalSign.signedFileName, System.Text.Encoding.Default))
+            string selectedFile;
+            selectedFile = cbFiles.SelectedItem.ToString();
+            using (StreamReader sr = new StreamReader(selectedFile, System.Text.Encoding.Default))
             {
                 string line;
                 while ((line = sr.ReadLine()) != null)
@@ -133,8 +134,14 @@ namespace Client
 
         private void GetPublicKey_Click(object sender, EventArgs e)
         {
+            //получить с сервера значение открытого ключа
+            form2.connection.sendToServer(form2.protocol.commands.getkeyRequest);
+
+            // приняли ответ с сервера
+            string key = form2.connection.getFromServer();
+
             // вывести в текстбокс значение открытого ключа
-            Signtb.Text += "Значение ключа: " + Environment.NewLine + digitalSign.publickey; //Convert.ToBase64String(digitalSign.publickey);
+            Signtb.Text += Environment.NewLine + "Значение ключа: " + Environment.NewLine + key;
         }
 
         private void fGetSign_FormClosing(object sender, FormClosingEventArgs e)
@@ -142,12 +149,27 @@ namespace Client
             // добавить запрос на logout
            
             Application.OpenForms[0].Show();
+        }
 
-            /*// отправить запрос серверу на отключение от него
-            sp.connection.sendToServer(sp.protocol.commands.disconnectionRequest);
+        private void ClearB_Click(object sender, EventArgs e)
+        {
+            Signtb.Clear();
+        }
 
-            // закрыть главную форму
-            Application.OpenForms[0].Close();*/
+        private void GetAllFilesB_Click(object sender, EventArgs e)
+        {
+            // отправить запрос серверу
+            form2.connection.sendToServer(form2.protocol.commands.getFilesRequest);
+            // приняли ответ с сервера
+            string answer = form2.connection.getFromServer();
+
+            // получать в цикле пути к файлам и отправлять ответ о получении
+            string buffer;
+            while((buffer = form2.connection.getFromServer()) != "Последний файл") //пока есть что принимать
+            {
+                cbFiles.Items.Add(buffer); // записываем в комбобокс
+                form2.connection.sendToServer("файл принят");
+            }
 
         }
     }

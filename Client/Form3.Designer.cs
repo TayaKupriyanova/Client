@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.GetAllFilesB = new System.Windows.Forms.Button();
             this.bLogOut = new System.Windows.Forms.Button();
             this.LoginBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -40,23 +41,36 @@
             this.ViewSign = new System.Windows.Forms.Button();
             this.Signtb = new System.Windows.Forms.TextBox();
             this.GetPublicKey = new System.Windows.Forms.Button();
+            this.ClearB = new System.Windows.Forms.Button();
+            this.cbFiles = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.GetAllFilesB);
             this.panel1.Controls.Add(this.bLogOut);
             this.panel1.Controls.Add(this.LoginBox);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Location = new System.Drawing.Point(22, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(341, 61);
+            this.panel1.Size = new System.Drawing.Size(336, 74);
             this.panel1.TabIndex = 0;
+            // 
+            // GetAllFilesB
+            // 
+            this.GetAllFilesB.Location = new System.Drawing.Point(218, 3);
+            this.GetAllFilesB.Name = "GetAllFilesB";
+            this.GetAllFilesB.Size = new System.Drawing.Size(110, 28);
+            this.GetAllFilesB.TabIndex = 2;
+            this.GetAllFilesB.Text = "Все файлы";
+            this.GetAllFilesB.UseVisualStyleBackColor = true;
+            this.GetAllFilesB.Click += new System.EventHandler(this.GetAllFilesB_Click);
             // 
             // bLogOut
             // 
-            this.bLogOut.Location = new System.Drawing.Point(228, 28);
+            this.bLogOut.Location = new System.Drawing.Point(218, 37);
             this.bLogOut.Name = "bLogOut";
             this.bLogOut.Size = new System.Drawing.Size(110, 28);
             this.bLogOut.TabIndex = 1;
@@ -130,7 +144,7 @@
             // 
             // ViewSign
             // 
-            this.ViewSign.Location = new System.Drawing.Point(22, 249);
+            this.ViewSign.Location = new System.Drawing.Point(22, 179);
             this.ViewSign.Name = "ViewSign";
             this.ViewSign.Size = new System.Drawing.Size(112, 34);
             this.ViewSign.TabIndex = 6;
@@ -150,7 +164,7 @@
             // 
             // GetPublicKey
             // 
-            this.GetPublicKey.Location = new System.Drawing.Point(22, 214);
+            this.GetPublicKey.Location = new System.Drawing.Point(22, 219);
             this.GetPublicKey.Name = "GetPublicKey";
             this.GetPublicKey.Size = new System.Drawing.Size(112, 29);
             this.GetPublicKey.TabIndex = 8;
@@ -158,11 +172,32 @@
             this.GetPublicKey.UseVisualStyleBackColor = true;
             this.GetPublicKey.Click += new System.EventHandler(this.GetPublicKey_Click);
             // 
+            // ClearB
+            // 
+            this.ClearB.Location = new System.Drawing.Point(22, 254);
+            this.ClearB.Name = "ClearB";
+            this.ClearB.Size = new System.Drawing.Size(112, 29);
+            this.ClearB.TabIndex = 9;
+            this.ClearB.Text = "Очистить";
+            this.ClearB.UseVisualStyleBackColor = true;
+            this.ClearB.Click += new System.EventHandler(this.ClearB_Click);
+            // 
+            // cbFiles
+            // 
+            this.cbFiles.FormattingEnabled = true;
+            this.cbFiles.Location = new System.Drawing.Point(378, 8);
+            this.cbFiles.Name = "cbFiles";
+            this.cbFiles.Size = new System.Drawing.Size(230, 21);
+            this.cbFiles.TabIndex = 10;
+            this.cbFiles.Text = "Ваши подисанные файлы";
+            // 
             // fGetSign
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(640, 295);
+            this.Controls.Add(this.cbFiles);
+            this.Controls.Add(this.ClearB);
             this.Controls.Add(this.GetPublicKey);
             this.Controls.Add(this.Signtb);
             this.Controls.Add(this.ViewSign);
@@ -197,5 +232,8 @@
         private System.Windows.Forms.Button ViewSign;
         private System.Windows.Forms.TextBox Signtb;
         private System.Windows.Forms.Button GetPublicKey;
+        private System.Windows.Forms.Button ClearB;
+        private System.Windows.Forms.Button GetAllFilesB;
+        private System.Windows.Forms.ComboBox cbFiles;
     }
 }
