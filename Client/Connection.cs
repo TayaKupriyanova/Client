@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-//using System.Security.Cryptography; // для RSA алгоритма
 using System.IO; // для работы с файлами
 using System.Net;
 using System.Net.Sockets; // для сокетов
@@ -34,7 +33,7 @@ namespace Client
         public string getFromServer()
         {
             StringBuilder builder = new StringBuilder();
-            byte[] data = new byte[256]; // буфер для ответаf
+            byte[] data = new byte[256]; // буфер для ответа
             int bytes = 0; // количество полученных байт
             do
             {

@@ -22,16 +22,10 @@ namespace Client
         internal Protocol protocol = new Protocol();
         // создаем элемент сетевого подключения
         internal Connection connection = new Connection();
-
-        byte[] data; // массив байт, передаваемый в сокетах
         StringBuilder builder = new StringBuilder();
-        int bytes;
 
         Hash hpassw;
         fGetSign newForm;
-
-        byte[] blogin, bpassword;
-
 
         public Form2()
         {

@@ -35,7 +35,6 @@ namespace Client
             // отобразили на форме логин пользователя
             LoginBox.Text = form2.login;
 
-            // загрузили все подписанные файлы в комбобокс
             // отправить запрос серверу
             form2.connection.sendToServer(form2.protocol.commands.getFilesRequest);
             // приняли ответ с сервера
@@ -66,7 +65,7 @@ namespace Client
         {
             // открыть диалоговое окно с выбором файла
             open_dialog = new OpenFileDialog(); //создание диалогового окна для выбора файла
-            open_dialog.Filter = "Text files | *.txt"; // формат загружаемого файла МОЖЕТ ПОМЕНЯТЬ ЕСЛИ ПОЛУЧИТСЯ
+            open_dialog.Filter = "Text files | *.txt"; // формат загружаемого файла
             open_dialog.Multiselect = false; // можно выбрать только один файл
             if (open_dialog.ShowDialog() == DialogResult.OK) //если в окне была нажата кнопка "ОК"
             {
@@ -96,7 +95,7 @@ namespace Client
             // переслать на сервер путь к файлу
             form2.connection.sendToServer(fileName);
 
-            // получаем зашифрованный файл и его имя с сервера? его размер и открытый ключ
+            // получаем зашифрованный файл и его имя с сервера, его размер и открытый ключ
             string sign = form2.connection.getFromServer();
             form2.connection.sendToServer("Текст получен");
             string signedfileName = form2.connection.getFromServer();
@@ -123,16 +122,8 @@ namespace Client
         private void bCheckSign_Click(object sender, EventArgs e)
         {
             // проверка подписи на подлинность
-            //fileName = PathBox.Text; // считать из текст бокса имя файла
-
-            // расшифровать открытым ключом закодированный файл
             digitalSign.getDecrypted();
-            MessageBox.Show(digitalSign.check.ToString(), "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-           // }
-           // else
-           // {
-           //     MessageBox.Show("False", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-           // }
+            MessageBox.Show(digitalSign.check.ToString(), "", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void ViewSign_Click(object sender, EventArgs e)

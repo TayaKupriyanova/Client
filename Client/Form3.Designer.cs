@@ -178,7 +178,7 @@
             this.cbFiles.Name = "cbFiles";
             this.cbFiles.Size = new System.Drawing.Size(230, 21);
             this.cbFiles.TabIndex = 10;
-            this.cbFiles.Text = "Ваши подисанные файлы";
+            this.cbFiles.Text = "Ваши подписанные файлы";
             // 
             // label3
             // 
