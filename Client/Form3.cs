@@ -15,10 +15,8 @@ namespace Client
     {
         Form2 form2;
         string fileName;
-        string signedfile;
-        string pkey;
 
-        DigitalSign digitalSign;
+        DigitalSign digitalSign  = new DigitalSign();
         OpenFileDialog open_dialog;
 
         public fGetSign()
@@ -32,9 +30,24 @@ namespace Client
             form2 = f;
         }
 
-        private void fGetSign_Load(object sender, EventArgs e) // отобразили на форме логин пользователя
+        private void fGetSign_Load(object sender, EventArgs e) 
         {
+            // отобразили на форме логин пользователя
             LoginBox.Text = form2.login;
+
+            // загрузили все подписанные файлы в комбобокс
+            // отправить запрос серверу
+            form2.connection.sendToServer(form2.protocol.commands.getFilesRequest);
+            // приняли ответ с сервера
+            string answer = form2.connection.getFromServer();
+
+            // получать в цикле файлы и отправлять ответ о получении
+            string buffer;
+            while ((buffer = form2.connection.getFromServer()) != "Последний файл") //пока есть что принимать
+            {
+                cbFiles.Items.Add(buffer); // записываем в комбобокс (имя файла)
+                form2.connection.sendToServer("файл принят");
+            }
         }
 
         private void bLogOut_Click(object sender, EventArgs e)
@@ -83,15 +96,25 @@ namespace Client
             // переслать на сервер путь к файлу
             form2.connection.sendToServer(fileName);
 
-            // получаем открытый ключ и зашифрованный файл с сервера
-            pkey = form2.connection.getFromServer();
-            form2.connection.sendToServer("Ключ получен");
-            signedfile = form2.connection.getFromServer();
+            // получаем зашифрованный файл и его имя с сервера? его размер и открытый ключ
+            string sign = form2.connection.getFromServer();
+            form2.connection.sendToServer("Текст получен");
+            string signedfileName = form2.connection.getFromServer();
+            form2.connection.sendToServer("Файл получен");
+            int size = Convert.ToInt32(form2.connection.getFromServer());
+            form2.connection.sendToServer("Размер получен");
+            string pkey = form2.connection.getFromServer();
 
             // создаем объект
-            digitalSign = new DigitalSign(pkey, signedfile, fileName);
+            digitalSign = new DigitalSign(pkey, signedfileName, fileName, sign, size);
 
-            
+            // добавить файл в комбобокс
+           
+            if (!cbFiles.Items.Contains(signedfileName))
+                cbFiles.Items.Add(signedfileName); // если такого еще не было, то добавить
+
+            cbFiles.SelectedItem = signedfileName;
+
             // вывести в месседж бокс сообщение о том что мы все подписали и мы молодцы
             MessageBox.Show("Файл подписан!", form2.protocol.commands.getSignRequest, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -100,15 +123,11 @@ namespace Client
         private void bCheckSign_Click(object sender, EventArgs e)
         {
             // проверка подписи на подлинность
-            fileName = PathBox.Text; // считать из текст бокса имя файла
+            //fileName = PathBox.Text; // считать из текст бокса имя файла
 
             // расшифровать открытым ключом закодированный файл
             digitalSign.getDecrypted();
-
-            // сравнить файл из текстбокса и полученный
-           // if(digitalSign.checkSign(fileName)) // если функция проверки подписи вернула true
-           // {
-           //     MessageBox.Show("True", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(digitalSign.check.ToString(), "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
            // }
            // else
            // {
@@ -118,18 +137,12 @@ namespace Client
 
         private void ViewSign_Click(object sender, EventArgs e)
         {
-            //Открыть файл
-            // переписать его в текстбокс
-            string selectedFile;
-            selectedFile = cbFiles.SelectedItem.ToString();
-            using (StreamReader sr = new StreamReader(selectedFile, System.Text.Encoding.Default))
-            {
-                string line;
-                while ((line = sr.ReadLine()) != null)
-                {
-                    Signtb.Text += line;
-                }
-            }
+            //запрос на получение текста файла, выбранного в комбобоксе
+            form2.connection.sendToServer(form2.protocol.commands.getTextRequest);
+            string f = form2.connection.getFromServer(); // получили ответ
+            form2.connection.sendToServer(cbFiles.SelectedItem.ToString()); // отправили имя файла
+            f = form2.connection.getFromServer(); // получили текст
+            Signtb.Text += f;// переписать его в текстбокс
         }
 
         private void GetPublicKey_Click(object sender, EventArgs e)
@@ -139,9 +152,10 @@ namespace Client
 
             // приняли ответ с сервера
             string key = form2.connection.getFromServer();
+            digitalSign.publickey = key;
 
             // вывести в текстбокс значение открытого ключа
-            Signtb.Text += Environment.NewLine + "Значение ключа: " + Environment.NewLine + key;
+            Signtb.Text += Environment.NewLine + "Значение ключа: " + Environment.NewLine + digitalSign.publickey;
         }
 
         private void fGetSign_FormClosing(object sender, FormClosingEventArgs e)
@@ -154,23 +168,6 @@ namespace Client
         private void ClearB_Click(object sender, EventArgs e)
         {
             Signtb.Clear();
-        }
-
-        private void GetAllFilesB_Click(object sender, EventArgs e)
-        {
-            // отправить запрос серверу
-            form2.connection.sendToServer(form2.protocol.commands.getFilesRequest);
-            // приняли ответ с сервера
-            string answer = form2.connection.getFromServer();
-
-            // получать в цикле пути к файлам и отправлять ответ о получении
-            string buffer;
-            while((buffer = form2.connection.getFromServer()) != "Последний файл") //пока есть что принимать
-            {
-                cbFiles.Items.Add(buffer); // записываем в комбобокс
-                form2.connection.sendToServer("файл принят");
-            }
-
         }
     }
 }

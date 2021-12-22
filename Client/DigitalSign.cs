@@ -10,58 +10,55 @@ namespace Client
 {
     internal class DigitalSign
     {
-        public string msgFileName;
-        public string publickey;
-        public string signedFileName;
+        public string msgFileName;  // имя подписанного файла
+        public string publickey;    // значение открытого ключа
+        public string signedFile;   // имя подписанного файла
+        public string sign;         // тест подписанного файла, так как клиент не имеет доступа к облаку
         RSACryptoServiceProvider provider = new RSACryptoServiceProvider(); // создали объект шифровальщикa
         byte[] decryptedData;
+        public int sizeSign;
+        public bool check; // результат проверки
 
-        public DigitalSign(string p, string s, string m)
+        public DigitalSign() { }
+        public DigitalSign(string pkey, string s, string m, string ssign, int size)
         {
-            publickey = p;
-            signedFileName = s;
+            publickey = pkey;
+            signedFile = s;
             msgFileName = m;
+            sign = ssign;
+            sizeSign = size;
         }
 
         public void getDecrypted() // не факт что войд
         {
-            try { 
-            byte[] data;
-            StringBuilder builder = new StringBuilder();
-
-            // прочитать файл signedFileName
-            string result = "";
-            using (StreamReader sr = new StreamReader(signedFileName, System.Text.Encoding.Default))
-            {
-                string line;
-                while ((line = sr.ReadLine()) != null)
+            try {
+                string result = "";
+                using (StreamReader sr = new StreamReader(msgFileName, System.Text.Encoding.Default))
                 {
-                    result += line;
+                    string line;
+
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        result += line;
+                    }
+                    sr.Close();
                 }
-                sr.Close();
-            }
-            data = Encoding.Unicode.GetBytes(result);
 
-                //преобразовать byte[] в RSAParametrs для использования открытого ключа
-                //int lBeginStart = "-----BEGIN PUBLIC KEY-----".Length;
-                //int lEndLength = "-----END PUBLIC KEY-----".Length;
-                //string KeyString = publickey.Substring(lBeginStart, (publickey.Length - lBeginStart - lEndLength));
-                //string tobase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(KeyString));
-                
-                //byte[] keyBlobBytes = Convert.FromBase64String(publickey);
-                //provider.ImportCspBlob(keyBlobBytes);
-                
-                // var parameters = prov.ExportParameters(false);
-
-                // RSAParameters parameters = new RSAParameters();
-                // parameters = GetRSAParameters(publickey);
-                // provider.ImportParameters(parameters); // установили закрытый ключ 
-               // string toxml = provider.ToString
-
+                byte[] message = Convert.FromBase64String(result);
+                byte[] data;
+                data = Convert.FromBase64String(sign);
                 provider.FromXmlString(publickey);
-                decryptedData = provider.Decrypt(data, false);
 
-            builder.Append(Encoding.Unicode.GetString(decryptedData)).ToString();
+                // bool success = false;
+                // SHA512Managed Hash = new SHA512Managed();
+                // byte[] hashedData = Hash.ComputeHash(sign);
+                // success = provider.VerifyData(bytesToVerify/**/, CryptoConfig.MapNameToOID("SHA512"), signedBytes);
+
+
+                //provider.
+                check = provider.VerifyData(message, new SHA256CryptoServiceProvider(), data); //HashAlgorithmName.SHA1, decryptedData);
+
+                //builder.Append(Encoding.Unicode.GetString(decryptedData)).ToString();
             }
             catch(Exception ex)
             {

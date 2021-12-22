@@ -52,18 +52,18 @@ namespace Client
             socket.Send(data);
         }
 
-        public byte [] getKeyFromServer()
+        public string getKeyFromServer()
         {
-           // StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
             byte[] data = new byte[256]; // буфер для ответа
             int bytes = 0; // количество полученных байт
             do
             {
                 bytes = socket.Receive(data, data.Length, 0);
-               // builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
+                builder.Append(Convert.ToBase64String(data));
             }
             while (socket.Available > 0);
-            return data;
+            return builder.Append(Convert.ToBase64String(data)).ToString();
 
         }
     }
